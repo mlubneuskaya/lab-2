@@ -1,6 +1,6 @@
 package gui;
 
-import gui.calculator.FunctionCalculator;
+import calculator.FunctionCalculator;
 
 import javax.swing.*;
 import java.awt.*;

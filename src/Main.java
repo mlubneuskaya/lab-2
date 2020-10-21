@@ -1,5 +1,5 @@
 import gui.Gui;
-import gui.calculator.FunctionCalculator;
+import calculator.FunctionCalculator;
 
 import javax.swing.*;
 
