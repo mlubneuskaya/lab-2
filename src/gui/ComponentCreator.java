@@ -3,7 +3,7 @@ package gui;
 import javax.swing.*;
 import java.awt.*;
 
-public class ComponentCreator {
+class ComponentCreator {
     public JTextField createTextField(String text, boolean editable) {
         JTextField textField = new JTextField(text);
         Dimension dimension = new Dimension(10 * textField.getPreferredSize().width,

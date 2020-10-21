@@ -1,5 +1,7 @@
 package gui;
 
+import gui.calculator.FunctionCalculator;
+
 import javax.swing.*;
 import java.awt.*;
 
@@ -7,16 +9,17 @@ public class Gui extends JFrame {
     public int width;
     public int height;
 
-    public Gui(int width, int height, String title) {
+    public Gui(int width, int height, String title, FunctionCalculator functionCalculator) {
         super(title);
         this.height = height;
         this.width = width;
         Toolkit kit = Toolkit.getDefaultToolkit();
         setLocation((kit.getScreenSize().width - WIDTH) / 2, (kit.getScreenSize().height - HEIGHT) / 2);
-
         Box radioButtonBox = Box.createHorizontalBox();
-        JRadioButton function1 = new JRadioButton("function 1");
+        JRadioButton function1 = new JRadioButton("function 1", true);
+        function1.addActionListener(actionEvent -> functionCalculator.setFormulaId(1));
         JRadioButton function2 = new JRadioButton("function 2");
+        function2.addActionListener(actionEvent -> functionCalculator.setFormulaId(2));
         ButtonGroup radioButtonGroup = new ButtonGroup();
         radioButtonGroup.add(function1);
         radioButtonGroup.add(function2);
@@ -24,7 +27,6 @@ public class Gui extends JFrame {
         radioButtonBox.add(function1, Box.createHorizontalStrut(10));
         radioButtonBox.add(function2, Box.createHorizontalStrut(10));
         radioButtonBox.add(Box.createHorizontalGlue());
-
         ComponentCreator componentCreator = new ComponentCreator();
         Box variableBox = Box.createHorizontalBox();
         JLabel xLabel = componentCreator.createLabel("x");
@@ -46,7 +48,6 @@ public class Gui extends JFrame {
         variableBox.add(Box.createHorizontalStrut(20));
         variableBox.add(zField);
         variableBox.add(Box.createHorizontalGlue());
-
         JLabel resultLabel = componentCreator.createLabel("result");
         JTextField resultField = componentCreator.createTextField("0", false);
         Box resultBox = Box.createHorizontalBox();
@@ -55,16 +56,31 @@ public class Gui extends JFrame {
         resultBox.add(Box.createHorizontalStrut(20));
         resultBox.add(resultField);
         resultBox.add(Box.createHorizontalGlue());
-
         JButton clear = componentCreator.createButton("clear");
+        clear.addActionListener(actionEvent -> {
+            xField.setText("0");
+            yField.setText("0");
+            zField.setText("0");
+            resultField.setText("0");
+        });
         JButton calculate = componentCreator.createButton("calculate");
+        calculate.addActionListener(actionEvent -> {
+            try {
+                double x = Double.parseDouble(xField.getText());
+                double y = Double.parseDouble(yField.getText());
+                double z = Double.parseDouble(zField.getText());
+                resultField.setText(String.valueOf(functionCalculator.calculate(x, y, z)));
+            } catch (NumberFormatException ex) {
+                JOptionPane.showMessageDialog(Gui.this,
+                        "");
+            }
+        });
         Box buttonBox = Box.createHorizontalBox();
         buttonBox.add(Box.createHorizontalGlue());
         buttonBox.add(clear);
         buttonBox.add(Box.createHorizontalStrut(100));
         buttonBox.add(calculate);
         buttonBox.add(Box.createHorizontalGlue());
-
         Box box = Box.createVerticalBox();
         box.add(Box.createVerticalGlue());
         box.add(radioButtonBox);
