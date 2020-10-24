@@ -112,6 +112,10 @@ public class Gui extends JFrame {
             functionCalculator.setFormulaId(formulaId);
             chosenFunction.setIcon(new ImageIcon(functionFile));
             resultField.setText("0");
+            memory.clearAll();
+            xMemory.setText("0");
+            yMemory.setText("0");
+            zMemory.setText("0");
         });
         return function;
     }
