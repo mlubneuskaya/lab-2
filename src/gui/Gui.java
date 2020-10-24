@@ -4,16 +4,24 @@ import calculator.FunctionCalculator;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 public class Gui extends JFrame {
-    public int width;
-    public int height;
+    private final FunctionCalculator functionCalculator;
+    private final JLabel chosenFunction;
+    private final JTextField resultField;
+    private final JTextField xField;
+    private final JTextField yField;
+    private final JTextField zField;
 
     public Gui(int width, int height, String title, FunctionCalculator functionCalculator,
                String functionFile1, String functionFile2) {
         super(title);
-        this.height = height;
-        this.width = width;
+        this.functionCalculator = functionCalculator;
+        setSize(width, height);
         Toolkit kit = Toolkit.getDefaultToolkit();
         setLocation((kit.getScreenSize().width - WIDTH) / 2, (kit.getScreenSize().height - HEIGHT) / 2);
         ComponentCreator componentCreator = new ComponentCreator();
@@ -21,55 +29,49 @@ public class Gui extends JFrame {
         JLabel xLabel = componentCreator.createLabel("x");
         JLabel yLabel = componentCreator.createLabel("y");
         JLabel zLabel = componentCreator.createLabel("z");
-        JTextField xField = componentCreator.createTextField("0", true);
-        JTextField yField = componentCreator.createTextField("0", true);
-        JTextField zField = componentCreator.createTextField("0", true);
-        variableBox.add(Box.createHorizontalGlue());
-        variableBox.add(xLabel);
-        variableBox.add(Box.createHorizontalStrut(20));
-        variableBox.add(xField);
-        variableBox.add(Box.createHorizontalStrut(20));
-        variableBox.add(yLabel);
-        variableBox.add(Box.createHorizontalStrut(20));
-        variableBox.add(yField);
-        variableBox.add(Box.createHorizontalStrut(20));
-        variableBox.add(zLabel);
-        variableBox.add(Box.createHorizontalStrut(20));
-        variableBox.add(zField);
-        variableBox.add(Box.createHorizontalGlue());
+        xField = componentCreator.createTextField("0", true);
+        yField = componentCreator.createTextField("0", true);
+        zField = componentCreator.createTextField("0", true);
+        List<JComponent> components = Arrays.asList(xLabel, xField, yLabel, yField, zLabel, zField);
+        insertComponents(variableBox, components);
         JLabel resultLabel = componentCreator.createLabel("result");
-        JTextField resultField = componentCreator.createTextField("0", false);
+        resultField = componentCreator.createTextField("0", false);
         Box resultBox = Box.createHorizontalBox();
-        resultBox.add(Box.createHorizontalGlue());
-        resultBox.add(resultLabel);
-        resultBox.add(Box.createHorizontalStrut(20));
-        resultBox.add(resultField);
-        resultBox.add(Box.createHorizontalGlue());
-        JLabel chosenFunction = new JLabel(new ImageIcon(functionFile1));
+        components = Arrays.asList(resultLabel, resultField);
+        insertComponents(resultBox, components);
+        chosenFunction = new JLabel(new ImageIcon(functionFile1));
         Box chosenFunctionBox = Box.createHorizontalBox();
-        chosenFunctionBox.add(Box.createHorizontalGlue());
-        chosenFunctionBox.add(chosenFunction);
-        chosenFunctionBox.add(Box.createHorizontalGlue());
+        components = Collections.singletonList(chosenFunction);
+        insertComponents(chosenFunctionBox, components);
         Box radioButtonBox = Box.createHorizontalBox();
-        JRadioButton function1 = new JRadioButton("function 1", true);
-        function1.addActionListener(actionEvent -> {
-            functionCalculator.setFormulaId(1);
-            chosenFunction.setIcon(new ImageIcon(functionFile1));
-            resultField.setText("0");
-        });
-        JRadioButton function2 = new JRadioButton("function 2");
-        function2.addActionListener(actionEvent -> {
-            functionCalculator.setFormulaId(2);
-            chosenFunction.setIcon(new ImageIcon(functionFile2));
-            resultField.setText("0");
-        });
+        JRadioButton function1 = createFunctionButton("function1", functionFile1, 1);
+        function1.setSelected(true);
+        JRadioButton function2 = createFunctionButton("function2", functionFile2, 2);
         ButtonGroup radioButtonGroup = new ButtonGroup();
         radioButtonGroup.add(function1);
         radioButtonGroup.add(function2);
-        radioButtonBox.add(Box.createHorizontalGlue());
-        radioButtonBox.add(function1, Box.createHorizontalStrut(10));
-        radioButtonBox.add(function2, Box.createHorizontalStrut(10));
-        radioButtonBox.add(Box.createHorizontalGlue());
+        components = Arrays.asList(function1, function2);
+        insertComponents(radioButtonBox,components);
+        JButton clear = createClearButton(componentCreator);
+        JButton calculate = createCalculateButton(componentCreator);
+        Box buttonBox = Box.createHorizontalBox();
+        components = Arrays.asList(clear, calculate);
+        insertComponents(buttonBox, components);
+        Box box = Box.createVerticalBox();
+        List<Box> boxes = Arrays.asList(radioButtonBox, chosenFunctionBox, variableBox, resultBox, buttonBox);
+        insertBoxes(box, boxes);
+        this.getContentPane().add(box);
+    }
+    private JRadioButton createFunctionButton(String name, String functionFile, int formulaId){
+        JRadioButton function = new JRadioButton(name);
+        function.addActionListener(actionEvent -> {
+            functionCalculator.setFormulaId(formulaId);
+            chosenFunction.setIcon(new ImageIcon(functionFile));
+            resultField.setText("0");
+        });
+        return function;
+    }
+    private JButton createClearButton(ComponentCreator componentCreator){
         JButton clear = componentCreator.createButton("clear");
         clear.addActionListener(actionEvent -> {
             xField.setText("0");
@@ -77,6 +79,9 @@ public class Gui extends JFrame {
             zField.setText("0");
             resultField.setText("0");
         });
+        return clear;
+    }
+    private JButton createCalculateButton(ComponentCreator componentCreator){
         JButton calculate = componentCreator.createButton("calculate");
         calculate.addActionListener(actionEvent -> {
             try {
@@ -89,24 +94,25 @@ public class Gui extends JFrame {
                         "");
             }
         });
-        Box buttonBox = Box.createHorizontalBox();
-        buttonBox.add(Box.createHorizontalGlue());
-        buttonBox.add(clear);
-        buttonBox.add(Box.createHorizontalStrut(100));
-        buttonBox.add(calculate);
-        buttonBox.add(Box.createHorizontalGlue());
-        Box box = Box.createVerticalBox();
-        box.add(Box.createVerticalGlue());
-        box.add(radioButtonBox);
-        box.add(Box.createVerticalGlue());
-        box.add(chosenFunctionBox);
-        box.add(Box.createVerticalGlue());
-        box.add(variableBox);
-        box.add(Box.createVerticalGlue());
-        box.add(resultBox);
-        box.add(Box.createVerticalGlue());
-        box.add(buttonBox);
-        box.add(Box.createVerticalGlue());
-        this.getContentPane().add(box);
+        return calculate;
+    }
+    private void insertBoxes(Box container, List<Box> boxes){
+        container.add(Box.createHorizontalGlue());
+        for(Box box: boxes){
+            container.add(box);
+            container.add(Box.createVerticalGlue());
+        }
+    }
+    private void insertComponents(Box container, List<JComponent> components){
+        container.add(Box.createHorizontalGlue());
+        components = new ArrayList<>(components);
+        JComponent lastComponent = components.get(components.size()-1);
+        components.remove(components.size()-1);
+        for(JComponent component: components){
+            container.add(component);
+            container.add(Box.createHorizontalStrut(20));
+        }
+        container.add(lastComponent);
+        container.add(Box.createHorizontalGlue());
     }
 }
