@@ -61,8 +61,9 @@ public class Gui extends JFrame {
         JButton clear = createClearButton(componentCreator);
         JButton calculate = createCalculateButton(componentCreator);
         JButton sum = createSumButton(componentCreator);
+        JButton mc = createMcButton(componentCreator);
         Box buttonBox = Box.createHorizontalBox();
-        components = Arrays.asList(clear, calculate, sum);
+        components = Arrays.asList(clear, calculate, sum, mc);
         insertComponents(buttonBox, components);
 
         JRadioButton xButton = createCurrentVariableButton("x", 1);
@@ -167,5 +168,11 @@ public class Gui extends JFrame {
             memory.setMemoryValue(value);
         });
         return sum;
+    }
+
+    private JButton createMcButton(ComponentCreator componentCreator){
+        JButton mc = componentCreator.createButton("MC");
+        mc.addActionListener(actionEvent -> memory.clearCurrentVariableMemory());
+        return mc;
     }
 }

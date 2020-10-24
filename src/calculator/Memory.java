@@ -28,4 +28,8 @@ public class Memory {
     public void clearAll() {
         memory.forEach((key, value) -> memory.replace(key, 0.0));
     }
+
+    public void clearCurrentVariableMemory(){
+        memory.replace(currentVariableId, 0.0);
+    }
 }
