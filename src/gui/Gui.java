@@ -31,13 +31,14 @@ public class Gui extends JFrame {
     private final JTextField zMemory;
     private final Memory memory;
 
-    public Gui(int width, int height, String title, String functionFile1, String functionFile2) {
-        super(title);
+    public Gui(UiConfigParams params, String[] functionFiles) {
+        super(params.title);
         functionCalculator = new FunctionCalculator();
         memory = new Memory();
-        setSize(width, height);
+        setSize(params.width, params.height);
         Toolkit kit = Toolkit.getDefaultToolkit();
-        setLocation((kit.getScreenSize().width - WIDTH) / 2, (kit.getScreenSize().height - HEIGHT) / 2);
+        setLocation((kit.getScreenSize().width - params.width) / 2,
+                (kit.getScreenSize().height - params.height) / 2);
         ComponentCreator componentCreator = new ComponentCreator();
         Box variableBox = Box.createHorizontalBox();
         JLabel xLabel = componentCreator.createLabel("x");
@@ -55,15 +56,15 @@ public class Gui extends JFrame {
         components = Arrays.asList(resultLabel, resultField);
         insertComponents(resultBox, components);
 
-        chosenFunction = new JLabel(new ImageIcon(functionFile1));
+        chosenFunction = new JLabel(new ImageIcon(functionFiles[0]));
         Box chosenFunctionBox = Box.createHorizontalBox();
         components = Collections.singletonList(chosenFunction);
         insertComponents(chosenFunctionBox, components);
 
         Box radioButtonBox = Box.createHorizontalBox();
-        JRadioButton function1 = createFunctionButton("function1", functionFile1, 1);
+        JRadioButton function1 = createFunctionButton("function1", functionFiles[0], 1);
         function1.setSelected(true);
-        JRadioButton function2 = createFunctionButton("function2", functionFile2, 2);
+        JRadioButton function2 = createFunctionButton("function2", functionFiles[1], 2);
         ButtonGroup radioButtonGroup = new ButtonGroup();
         radioButtonGroup.add(function1);
         radioButtonGroup.add(function2);
