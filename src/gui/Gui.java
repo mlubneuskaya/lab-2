@@ -86,11 +86,11 @@ public class Gui extends JFrame {
         components = Arrays.asList(xLabel, xMemory, yLabel, yMemory, zLabel, zMemory);
         insertComponents(memoryBox, components);
 
-        JRadioButton xButton = createCurrentVariableButton("x", 1);
+        JRadioButton xButton = createCurrentVariableButton("x");
         xButton.setSelected(true);
-        memory.setCurrentVariableId(1);
-        JRadioButton yButton = createCurrentVariableButton("y", 2);
-        JRadioButton zButton = createCurrentVariableButton("z", 3);
+        memory.setCurrentVariable("x");
+        JRadioButton yButton = createCurrentVariableButton("y");
+        JRadioButton zButton = createCurrentVariableButton("z");
         ButtonGroup currentVariablesGroup = new ButtonGroup();
         currentVariablesGroup.add(xButton);
         currentVariablesGroup.add(yButton);
@@ -116,9 +116,9 @@ public class Gui extends JFrame {
         return function;
     }
 
-    private JRadioButton createCurrentVariableButton(String name, int variableId) {
+    private JRadioButton createCurrentVariableButton(String name) {
         JRadioButton currentVariable = new JRadioButton(name);
-        currentVariable.addActionListener(actionEvent -> memory.setCurrentVariableId(variableId));
+        currentVariable.addActionListener(actionEvent -> memory.setCurrentVariable(name));
         return currentVariable;
     }
 
@@ -175,17 +175,21 @@ public class Gui extends JFrame {
         JButton sum = componentCreator.createButton("M+");
         sum.addActionListener(actionEvent -> {
             double result = Double.parseDouble(resultField.getText());
-            int variableId = memory.getCurrentVariableId();
+            String variable = memory.getCurrentVariable();
             double value = 0.0;
-            if (variableId == 1) {
-                value = Double.parseDouble(xField.getText());
-                xMemory.setText(String.valueOf(result + value));
-            } else if (variableId == 2) {
-                value = Double.parseDouble(yField.getText());
-                yMemory.setText(String.valueOf(result + value));
-            } else if (variableId == 3) {
-                value = Double.parseDouble(zField.getText());
-                zMemory.setText(String.valueOf(result + value));
+            switch (variable) {
+                case "x":
+                    value = Double.parseDouble(xField.getText());
+                    xMemory.setText(String.valueOf(result + value));
+                    break;
+                case "y":
+                    value = Double.parseDouble(yField.getText());
+                    yMemory.setText(String.valueOf(result + value));
+                    break;
+                case "z":
+                    value = Double.parseDouble(zField.getText());
+                    zMemory.setText(String.valueOf(result + value));
+                    break;
             }
             resultField.setText(String.valueOf(result + value));
             memory.setMemoryValue(value);
@@ -193,17 +197,21 @@ public class Gui extends JFrame {
         return sum;
     }
 
-    private JButton createMcButton(ComponentCreator componentCreator){
+    private JButton createMcButton(ComponentCreator componentCreator) {
         JButton mc = componentCreator.createButton("MC");
         mc.addActionListener(actionEvent -> {
             memory.clearCurrentVariableMemory();
-            int variableId = memory.getCurrentVariableId();
-            if (variableId == 1) {
-                xMemory.setText("0");
-            } else if (variableId == 2) {
-                yMemory.setText("0");
-            } else if (variableId == 3) {
-                zMemory.setText("0");
+            String variable = memory.getCurrentVariable();
+            switch (variable) {
+                case "x":
+                    xMemory.setText("0");
+                    break;
+                case "y":
+                    yMemory.setText("0");
+                    break;
+                case "z":
+                    zMemory.setText("0");
+                    break;
             }
         });
         return mc;
