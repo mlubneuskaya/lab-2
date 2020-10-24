@@ -1,6 +1,7 @@
 package gui;
 
 import calculator.FunctionCalculator;
+import calculator.Memory;
 
 import javax.swing.*;
 import java.awt.*;
@@ -16,11 +17,12 @@ public class Gui extends JFrame {
     private final JTextField xField;
     private final JTextField yField;
     private final JTextField zField;
+    private final Memory memory;
 
-    public Gui(int width, int height, String title, FunctionCalculator functionCalculator,
-               String functionFile1, String functionFile2) {
+    public Gui(int width, int height, String title, String functionFile1, String functionFile2) {
         super(title);
-        this.functionCalculator = functionCalculator;
+        functionCalculator = new FunctionCalculator();
+        memory = new Memory();
         setSize(width, height);
         Toolkit kit = Toolkit.getDefaultToolkit();
         setLocation((kit.getScreenSize().width - WIDTH) / 2, (kit.getScreenSize().height - HEIGHT) / 2);
@@ -34,15 +36,18 @@ public class Gui extends JFrame {
         zField = componentCreator.createTextField("0", true);
         List<JComponent> components = Arrays.asList(xLabel, xField, yLabel, yField, zLabel, zField);
         insertComponents(variableBox, components);
+
         JLabel resultLabel = componentCreator.createLabel("result");
         resultField = componentCreator.createTextField("0", false);
         Box resultBox = Box.createHorizontalBox();
         components = Arrays.asList(resultLabel, resultField);
         insertComponents(resultBox, components);
+
         chosenFunction = new JLabel(new ImageIcon(functionFile1));
         Box chosenFunctionBox = Box.createHorizontalBox();
         components = Collections.singletonList(chosenFunction);
         insertComponents(chosenFunctionBox, components);
+
         Box radioButtonBox = Box.createHorizontalBox();
         JRadioButton function1 = createFunctionButton("function1", functionFile1, 1);
         function1.setSelected(true);
@@ -51,18 +56,36 @@ public class Gui extends JFrame {
         radioButtonGroup.add(function1);
         radioButtonGroup.add(function2);
         components = Arrays.asList(function1, function2);
-        insertComponents(radioButtonBox,components);
+        insertComponents(radioButtonBox, components);
+
         JButton clear = createClearButton(componentCreator);
         JButton calculate = createCalculateButton(componentCreator);
+        JButton sum = createSumButton(componentCreator);
         Box buttonBox = Box.createHorizontalBox();
-        components = Arrays.asList(clear, calculate);
+        components = Arrays.asList(clear, calculate, sum);
         insertComponents(buttonBox, components);
+
+        JRadioButton xButton = createCurrentVariableButton("x", 1);
+        xButton.setSelected(true);
+        memory.setCurrentVariableId(1);
+        JRadioButton yButton = createCurrentVariableButton("y", 2);
+        JRadioButton zButton = createCurrentVariableButton("z", 3);
+        ButtonGroup currentVariablesGroup = new ButtonGroup();
+        currentVariablesGroup.add(xButton);
+        currentVariablesGroup.add(yButton);
+        currentVariablesGroup.add(zButton);
+        Box currentVariablesBox = Box.createHorizontalBox();
+        components = Arrays.asList(xButton, yButton, zButton);
+        insertComponents(currentVariablesBox, components);
+
         Box box = Box.createVerticalBox();
-        List<Box> boxes = Arrays.asList(radioButtonBox, chosenFunctionBox, variableBox, resultBox, buttonBox);
+        List<Box> boxes = Arrays.asList(radioButtonBox, chosenFunctionBox, variableBox, currentVariablesBox,
+                resultBox, buttonBox);
         insertBoxes(box, boxes);
         this.getContentPane().add(box);
     }
-    private JRadioButton createFunctionButton(String name, String functionFile, int formulaId){
+
+    private JRadioButton createFunctionButton(String name, String functionFile, int formulaId) {
         JRadioButton function = new JRadioButton(name);
         function.addActionListener(actionEvent -> {
             functionCalculator.setFormulaId(formulaId);
@@ -71,7 +94,14 @@ public class Gui extends JFrame {
         });
         return function;
     }
-    private JButton createClearButton(ComponentCreator componentCreator){
+
+    private JRadioButton createCurrentVariableButton(String name, int variableId) {
+        JRadioButton currentVariable = new JRadioButton(name);
+        currentVariable.addActionListener(actionEvent -> memory.setCurrentVariableId(variableId));
+        return currentVariable;
+    }
+
+    private JButton createClearButton(ComponentCreator componentCreator) {
         JButton clear = componentCreator.createButton("clear");
         clear.addActionListener(actionEvent -> {
             xField.setText("0");
@@ -79,9 +109,11 @@ public class Gui extends JFrame {
             zField.setText("0");
             resultField.setText("0");
         });
+        memory.clearAll();
         return clear;
     }
-    private JButton createCalculateButton(ComponentCreator componentCreator){
+
+    private JButton createCalculateButton(ComponentCreator componentCreator) {
         JButton calculate = componentCreator.createButton("calculate");
         calculate.addActionListener(actionEvent -> {
             try {
@@ -96,23 +128,44 @@ public class Gui extends JFrame {
         });
         return calculate;
     }
-    private void insertBoxes(Box container, List<Box> boxes){
+
+    private void insertBoxes(Box container, List<Box> boxes) {
         container.add(Box.createHorizontalGlue());
-        for(Box box: boxes){
+        for (Box box : boxes) {
             container.add(box);
             container.add(Box.createVerticalGlue());
         }
     }
-    private void insertComponents(Box container, List<JComponent> components){
+
+    private void insertComponents(Box container, List<JComponent> components) {
         container.add(Box.createHorizontalGlue());
         components = new ArrayList<>(components);
-        JComponent lastComponent = components.get(components.size()-1);
-        components.remove(components.size()-1);
-        for(JComponent component: components){
+        JComponent lastComponent = components.get(components.size() - 1);
+        components.remove(components.size() - 1);
+        for (JComponent component : components) {
             container.add(component);
             container.add(Box.createHorizontalStrut(20));
         }
         container.add(lastComponent);
         container.add(Box.createHorizontalGlue());
+    }
+
+    private JButton createSumButton(ComponentCreator componentCreator) {
+        JButton sum = componentCreator.createButton("M+");
+        sum.addActionListener(actionEvent -> {
+            int variableId = memory.getCurrentVariableId();
+            double value = 0.0;
+            if (variableId == 1) {
+                value = Double.parseDouble(xField.getText());
+            } else if (variableId == 2) {
+                value = Double.parseDouble(yField.getText());
+            } else if (variableId == 3) {
+                value = Double.parseDouble(zField.getText());
+            }
+            double result = Double.parseDouble(resultField.getText());
+            resultField.setText(String.valueOf(result + value));
+            memory.setMemoryValue(value);
+        });
+        return sum;
     }
 }
