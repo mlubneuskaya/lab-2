@@ -17,6 +17,9 @@ public class Gui extends JFrame {
     private final JTextField xField;
     private final JTextField yField;
     private final JTextField zField;
+    private final JTextField xMemory;
+    private final JTextField yMemory;
+    private final JTextField zMemory;
     private final Memory memory;
 
     public Gui(int width, int height, String title, String functionFile1, String functionFile2) {
@@ -66,6 +69,13 @@ public class Gui extends JFrame {
         components = Arrays.asList(clear, calculate, sum, mc);
         insertComponents(buttonBox, components);
 
+        xMemory = componentCreator.createTextField("0", false);
+        yMemory = componentCreator.createTextField("0", false);
+        zMemory = componentCreator.createTextField("0", false);
+        Box memoryBox = Box.createHorizontalBox();
+        components = Arrays.asList(xLabel, xMemory, yLabel, yMemory, zLabel, zMemory);
+        insertComponents(memoryBox, components);
+
         JRadioButton xButton = createCurrentVariableButton("x", 1);
         xButton.setSelected(true);
         memory.setCurrentVariableId(1);
@@ -80,7 +90,7 @@ public class Gui extends JFrame {
         insertComponents(currentVariablesBox, components);
 
         Box box = Box.createVerticalBox();
-        List<Box> boxes = Arrays.asList(radioButtonBox, chosenFunctionBox, variableBox, currentVariablesBox,
+        List<Box> boxes = Arrays.asList(radioButtonBox, chosenFunctionBox, variableBox, currentVariablesBox, memoryBox,
                 resultBox, buttonBox);
         insertBoxes(box, boxes);
         this.getContentPane().add(box);
@@ -154,16 +164,19 @@ public class Gui extends JFrame {
     private JButton createSumButton(ComponentCreator componentCreator) {
         JButton sum = componentCreator.createButton("M+");
         sum.addActionListener(actionEvent -> {
+            double result = Double.parseDouble(resultField.getText());
             int variableId = memory.getCurrentVariableId();
             double value = 0.0;
             if (variableId == 1) {
                 value = Double.parseDouble(xField.getText());
+                xMemory.setText(String.valueOf(result + value));
             } else if (variableId == 2) {
                 value = Double.parseDouble(yField.getText());
+                yMemory.setText(String.valueOf(result + value));
             } else if (variableId == 3) {
                 value = Double.parseDouble(zField.getText());
+                zMemory.setText(String.valueOf(result + value));
             }
-            double result = Double.parseDouble(resultField.getText());
             resultField.setText(String.valueOf(result + value));
             memory.setMemoryValue(value);
         });
@@ -172,7 +185,17 @@ public class Gui extends JFrame {
 
     private JButton createMcButton(ComponentCreator componentCreator){
         JButton mc = componentCreator.createButton("MC");
-        mc.addActionListener(actionEvent -> memory.clearCurrentVariableMemory());
+        mc.addActionListener(actionEvent -> {
+            memory.clearCurrentVariableMemory();
+            int variableId = memory.getCurrentVariableId();
+            if (variableId == 1) {
+                xMemory.setText("0");
+            } else if (variableId == 2) {
+                yMemory.setText("0");
+            } else if (variableId == 3) {
+                zMemory.setText("0");
+            }
+        });
         return mc;
     }
 }
