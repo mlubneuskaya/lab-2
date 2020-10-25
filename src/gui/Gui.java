@@ -150,7 +150,11 @@ public class Gui extends JFrame {
                 double z = Double.parseDouble(zField.getText());
                 resultField.setText(String.valueOf(functionCalculator.calculate(x, y, z)));
             } catch (NumberFormatException ex){
-                JOptionPane.showMessageDialog(Gui.this, "");
+                JOptionPane.showMessageDialog(Gui.this, "enter numbers");
+                resultField.setText("0");
+            } catch (ArithmeticException ex){
+                JOptionPane.showMessageDialog(Gui.this, "enter different values");
+                resultField.setText("0");
             }
            });
         return calculate;
