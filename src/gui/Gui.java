@@ -83,7 +83,10 @@ public class Gui extends JFrame {
         yMemory = componentCreator.createTextField("0", false);
         zMemory = componentCreator.createTextField("0", false);
         Box memoryBox = Box.createHorizontalBox();
-        components = Arrays.asList(xLabel, xMemory, yLabel, yMemory, zLabel, zMemory);
+        JLabel xLabel1 = componentCreator.createLabel("x");
+        JLabel yLabel1 = componentCreator.createLabel("y");
+        JLabel zLabel1 = componentCreator.createLabel("z");
+        components = Arrays.asList(xLabel1, xMemory, yLabel1, yMemory, zLabel1, zMemory);
         insertComponents(memoryBox, components);
 
         JRadioButton xButton = createCurrentVariableButton("x");
