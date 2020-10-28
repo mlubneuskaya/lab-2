@@ -149,14 +149,15 @@ public class Gui extends JFrame {
                 double y = Double.parseDouble(yField.getText());
                 double z = Double.parseDouble(zField.getText());
                 resultField.setText(String.valueOf(functionCalculator.calculate(x, y, z)));
-            } catch (NumberFormatException ex){
-                JOptionPane.showMessageDialog(Gui.this, "enter numbers");
-                resultField.setText("0");
-            } catch (ArithmeticException ex){
-                JOptionPane.showMessageDialog(Gui.this, "enter different values");
-                resultField.setText("0");
+            } catch (NumberFormatException ex) {
+                JOptionPane.showMessageDialog(Gui.this, "please enter numbers");
+                resultField.setText("error");
+            } catch (ArithmeticException ex) {
+                JOptionPane.showMessageDialog(Gui.this, "result is not a number\n" +
+                        "please enter different values");
+                resultField.setText("error");
             }
-           });
+        });
         return calculate;
     }
 
