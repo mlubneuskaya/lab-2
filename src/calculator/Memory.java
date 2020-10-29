@@ -4,32 +4,28 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Memory {
-    private final Map<String, Double> memory = new HashMap<>();
-    private String currentVariable;
+    private final Map<Integer, Double> memory = new HashMap<>();
+    private Integer currentVariable;
 
-    public Memory() {
-        memory.put("x", 0.0);
-        memory.put("y", 0.0);
-        memory.put("z", 0.0);
+    public Memory(int numberOfFields) {
+        for (int i = 0; i < numberOfFields; i++) {
+            memory.put(i, 0.0);
+        }
     }
 
-    public void setCurrentVariable(String variable) {
+    public void setCurrentVariable(Integer variable) {
         currentVariable = variable;
     }
 
-    public String getCurrentVariable() {
-        return currentVariable;
+    public Double getMemoryValue() {
+        return memory.get(currentVariable);
     }
 
     public void setMemoryValue(Double value) {
         memory.replace(currentVariable, value);
     }
 
-    public void clearAll() {
-        memory.forEach((key, value) -> memory.replace(key, 0.0));
-    }
-
-    public void clearCurrentVariableMemory(){
+    public void clearCurrentVariableMemory() {
         memory.replace(currentVariable, 0.0);
     }
 }

@@ -26,15 +26,13 @@ public class Gui extends JFrame {
     private final JTextField xField;
     private final JTextField yField;
     private final JTextField zField;
-    private final JTextField xMemory;
-    private final JTextField yMemory;
-    private final JTextField zMemory;
+    private final JTextField memoryField;
     private final Memory memory;
 
     public Gui(UiConfigParams params, String[] functionFiles) {
         super(params.title);
         functionCalculator = new FunctionCalculator();
-        memory = new Memory();
+        memory = new Memory(3);
         setSize(params.width, params.height);
         Toolkit kit = Toolkit.getDefaultToolkit();
         setLocation((kit.getScreenSize().width - params.width) / 2,
@@ -79,21 +77,16 @@ public class Gui extends JFrame {
         components = Arrays.asList(clear, calculate, sum, mc);
         insertComponents(buttonBox, components);
 
-        xMemory = componentCreator.createTextField("0", false);
-        yMemory = componentCreator.createTextField("0", false);
-        zMemory = componentCreator.createTextField("0", false);
+        memoryField = componentCreator.createTextField("0", false);
         Box memoryBox = Box.createHorizontalBox();
-        JLabel xLabel1 = componentCreator.createLabel("x");
-        JLabel yLabel1 = componentCreator.createLabel("y");
-        JLabel zLabel1 = componentCreator.createLabel("z");
-        components = Arrays.asList(xLabel1, xMemory, yLabel1, yMemory, zLabel1, zMemory);
+        components = Collections.singletonList(memoryField);
         insertComponents(memoryBox, components);
 
-        JRadioButton xButton = createCurrentVariableButton("x");
+        JRadioButton xButton = createCurrentVariableButton("mem1");
         xButton.setSelected(true);
-        memory.setCurrentVariable("x");
-        JRadioButton yButton = createCurrentVariableButton("y");
-        JRadioButton zButton = createCurrentVariableButton("z");
+        memory.setCurrentVariable(0);
+        JRadioButton yButton = createCurrentVariableButton("mem2");
+        JRadioButton zButton = createCurrentVariableButton("mem3");
         ButtonGroup currentVariablesGroup = new ButtonGroup();
         currentVariablesGroup.add(xButton);
         currentVariablesGroup.add(yButton);
@@ -103,8 +96,8 @@ public class Gui extends JFrame {
         insertComponents(currentVariablesBox, components);
 
         Box box = Box.createVerticalBox();
-        List<Box> boxes = Arrays.asList(radioButtonBox, chosenFunctionBox, variableBox, currentVariablesBox, memoryBox,
-                resultBox, buttonBox);
+        List<Box> boxes = Arrays.asList(radioButtonBox, chosenFunctionBox, variableBox,
+                resultBox, currentVariablesBox, memoryBox, buttonBox);
         insertBoxes(box, boxes);
         this.getContentPane().add(box);
     }
@@ -115,17 +108,26 @@ public class Gui extends JFrame {
             functionCalculator.setFormulaId(formulaId);
             chosenFunction.setIcon(new ImageIcon(functionFile));
             resultField.setText("0");
-            memory.clearAll();
-            xMemory.setText("0");
-            yMemory.setText("0");
-            zMemory.setText("0");
         });
         return function;
     }
 
     private JRadioButton createCurrentVariableButton(String name) {
         JRadioButton currentVariable = new JRadioButton(name);
-        currentVariable.addActionListener(actionEvent -> memory.setCurrentVariable(name));
+        currentVariable.addActionListener(actionEvent -> {
+            switch (name) {
+                case "mem1":
+                    memory.setCurrentVariable(0);
+                    break;
+                case "mem2":
+                    memory.setCurrentVariable(1);
+                    break;
+                case "mem3":
+                    memory.setCurrentVariable(2);
+                    break;
+            }
+            memoryField.setText(String.valueOf(memory.getMemoryValue()));
+        });
         return currentVariable;
     }
 
@@ -137,7 +139,7 @@ public class Gui extends JFrame {
             zField.setText("0");
             resultField.setText("0");
         });
-        memory.clearAll();
+        memory.clearCurrentVariableMemory();
         return clear;
     }
 
@@ -186,24 +188,10 @@ public class Gui extends JFrame {
         JButton sum = componentCreator.createButton("M+");
         sum.addActionListener(actionEvent -> {
             double result = Double.parseDouble(resultField.getText());
-            String variable = memory.getCurrentVariable();
-            double value = 0.0;
-            switch (variable) {
-                case "x":
-                    value = Double.parseDouble(xField.getText());
-                    xMemory.setText(String.valueOf(result + value));
-                    break;
-                case "y":
-                    value = Double.parseDouble(yField.getText());
-                    yMemory.setText(String.valueOf(result + value));
-                    break;
-                case "z":
-                    value = Double.parseDouble(zField.getText());
-                    zMemory.setText(String.valueOf(result + value));
-                    break;
-            }
-            resultField.setText(String.valueOf(result + value));
+            double value = memory.getMemoryValue() + result;
             memory.setMemoryValue(value);
+            memoryField.setText(String.valueOf(value));
+            resultField.setText(String.valueOf(value));
         });
         return sum;
     }
@@ -212,18 +200,7 @@ public class Gui extends JFrame {
         JButton mc = componentCreator.createButton("MC");
         mc.addActionListener(actionEvent -> {
             memory.clearCurrentVariableMemory();
-            String variable = memory.getCurrentVariable();
-            switch (variable) {
-                case "x":
-                    xMemory.setText("0");
-                    break;
-                case "y":
-                    yMemory.setText("0");
-                    break;
-                case "z":
-                    zMemory.setText("0");
-                    break;
-            }
+            memoryField.setText("0");
         });
         return mc;
     }
