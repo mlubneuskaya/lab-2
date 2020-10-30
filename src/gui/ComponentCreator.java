@@ -1,7 +1,9 @@
 package gui;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.JTextField;
+import javax.swing.JLabel;
+import javax.swing.JButton;
+import java.awt.Dimension;
 
 class ComponentCreator {
     public JTextField createTextField(String text, boolean editable) {
@@ -25,7 +27,7 @@ class ComponentCreator {
         return label;
     }
 
-    public JButton createButton(String text){
+    public JButton createButton(String text) {
         JButton button = new JButton(text);
         Dimension dimension = new Dimension(button.getPreferredSize());
         button.setMinimumSize(dimension);
