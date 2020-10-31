@@ -1,10 +1,6 @@
 package calculator;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-
 import static java.lang.Math.*;
-import static java.lang.Math.pow;
 
 public class Function1 implements Strategy {
     @Override
@@ -18,11 +14,6 @@ public class Function1 implements Strategy {
         if (firstTerm.isNaN() || secondTerm.isNaN()) {
             throw new ArithmeticException();
         }
-        double result = firstTerm + secondTerm;
-        result = BigDecimal.valueOf(result)
-                .setScale(3, RoundingMode.HALF_UP)
-                .doubleValue();
-
-        return result;
+        return firstTerm + secondTerm;
     }
 }

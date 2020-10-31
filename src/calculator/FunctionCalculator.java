@@ -1,5 +1,8 @@
 package calculator;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+
 public class FunctionCalculator {
     private Strategy strategy;
 
@@ -8,6 +11,12 @@ public class FunctionCalculator {
     }
 
     public double calculate(double x, double y, double z) {
-        return strategy.calculate(x, y, z);
+        double result = strategy.calculate(x, y, z);
+        if (!Double.isInfinite(result)) {
+            result = BigDecimal.valueOf(result)
+                    .setScale(6, RoundingMode.HALF_UP)
+                    .doubleValue();
+        }
+        return result;
     }
 }

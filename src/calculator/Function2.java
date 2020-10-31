@@ -1,11 +1,6 @@
 package calculator;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-
-import static java.lang.Math.pow;
-import static java.lang.Math.log;
-import static java.lang.Math.cos;
+import static java.lang.Math.*;
 
 public class Function2 implements Strategy {
 
@@ -20,11 +15,6 @@ public class Function2 implements Strategy {
         if (firstMultiplier.isNaN() || secondMultiplier.isNaN()) {
             throw new ArithmeticException();
         }
-        double result = firstMultiplier + secondMultiplier;
-        result = BigDecimal.valueOf(result)
-                .setScale(3, RoundingMode.HALF_UP)
-                .doubleValue();
-
-        return result;
+        return firstMultiplier * secondMultiplier;
     }
 }
