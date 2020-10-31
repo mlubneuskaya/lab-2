@@ -96,7 +96,7 @@ public class Gui extends JFrame {
         Box radioButtonBox = Box.createHorizontalBox();
         JRadioButton function1 = createFunctionButton("function1", functionFiles[0]);
         function1.setSelected(true);
-        calculator.setStrategy(new Function1());
+        calculator.setFunction(new Function1());
         JRadioButton function2 = createFunctionButton("function2", functionFiles[1]);
         ButtonGroup radioButtonGroup = new ButtonGroup();
         radioButtonGroup.add(function1);
@@ -146,9 +146,9 @@ public class Gui extends JFrame {
         function.setName(name);
         function.addActionListener(actionEvent -> {
             if (function.getName().equals("function1")) {
-                calculator.setStrategy(new Function1());
+                calculator.setFunction(new Function1());
             } else {
-                calculator.setStrategy(new Function2());
+                calculator.setFunction(new Function2());
             }
             chosenFunction.setIcon(new ImageIcon(functionFile));
             resultField.setText("0");

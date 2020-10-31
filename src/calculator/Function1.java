@@ -5,7 +5,8 @@ import static java.lang.Math.sin;
 import static java.lang.Math.pow;
 import static java.lang.Math.log;
 
-public class Function1 implements Strategy {
+public class Function1 implements Function {
+
     @Override
     public double calculate(double x, double y, double z) {
         double logarithm = log(pow((1 + x), 2));

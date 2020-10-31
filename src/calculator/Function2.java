@@ -4,7 +4,7 @@ import static java.lang.Math.cos;
 import static java.lang.Math.pow;
 import static java.lang.Math.log;
 
-public class Function2 implements Strategy {
+public class Function2 implements Function {
 
     @Override
     public double calculate(double x, double y, double z) {
