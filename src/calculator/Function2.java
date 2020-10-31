@@ -1,6 +1,8 @@
 package calculator;
 
-import static java.lang.Math.*;
+import static java.lang.Math.cos;
+import static java.lang.Math.pow;
+import static java.lang.Math.log;
 
 public class Function2 implements Strategy {
 
