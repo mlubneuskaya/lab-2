@@ -1,26 +1,12 @@
 package gui;
 
-import calculator.FunctionCalculator;
-import calculator.Memory;
+import calculator.*;
 
-import javax.swing.JFrame;
-import javax.swing.JTextField;
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JComponent;
-import javax.swing.JRadioButton;
-import javax.swing.ButtonGroup;
-import javax.swing.Box;
-import javax.swing.JOptionPane;
-import javax.swing.ImageIcon;
+import javax.swing.*;
 import java.awt.Toolkit;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 public class Gui extends JFrame {
-    private final FunctionCalculator functionCalculator;
     private JLabel chosenFunction;
     private JTextField resultField;
     private JTextField xField;
@@ -30,11 +16,12 @@ public class Gui extends JFrame {
     private final String[] functionFiles;
     private final Memory memory;
     private final ComponentCreator componentCreator;
+    private final FunctionCalculator calculator;
 
     public Gui(UiConfigParams params, String[] functionFiles) {
         super(params.title);
-        functionCalculator = new FunctionCalculator();
         memory = new Memory(3);
+        calculator = new FunctionCalculator();
         setSize(params.width, params.height);
         Toolkit kit = Toolkit.getDefaultToolkit();
         setLocation((kit.getScreenSize().width - params.width) / 2,
@@ -55,7 +42,7 @@ public class Gui extends JFrame {
         this.getContentPane().add(box);
     }
 
-    private Box createVariableBox(){
+    private Box createVariableBox() {
         Box variableBox = Box.createHorizontalBox();
         JLabel xLabel = componentCreator.createLabel("x");
         JLabel yLabel = componentCreator.createLabel("y");
@@ -68,7 +55,7 @@ public class Gui extends JFrame {
         return variableBox;
     }
 
-    private Box createResultBox(){
+    private Box createResultBox() {
         JLabel resultLabel = componentCreator.createLabel("result");
         resultField = componentCreator.createTextField("0", false);
         Box resultBox = Box.createHorizontalBox();
@@ -77,7 +64,7 @@ public class Gui extends JFrame {
         return resultBox;
     }
 
-    private Box createChosenFunctionBox(){
+    private Box createChosenFunctionBox() {
         chosenFunction = new JLabel(new ImageIcon(functionFiles[0]));
         Box chosenFunctionBox = Box.createHorizontalBox();
         List<JComponent> components = Collections.singletonList(chosenFunction);
@@ -85,11 +72,12 @@ public class Gui extends JFrame {
         return chosenFunctionBox;
     }
 
-    private Box createRadioButtonBox(){
+    private Box createRadioButtonBox() {
         Box radioButtonBox = Box.createHorizontalBox();
-        JRadioButton function1 = createFunctionButton("function1", functionFiles[0], 1);
+        JRadioButton function1 = createFunctionButton("function1", functionFiles[0]);
         function1.setSelected(true);
-        JRadioButton function2 = createFunctionButton("function2", functionFiles[1], 2);
+        calculator.setStrategy(new Function1());
+        JRadioButton function2 = createFunctionButton("function2", functionFiles[1]);
         ButtonGroup radioButtonGroup = new ButtonGroup();
         radioButtonGroup.add(function1);
         radioButtonGroup.add(function2);
@@ -98,7 +86,7 @@ public class Gui extends JFrame {
         return radioButtonBox;
     }
 
-    private Box createButtonBox(){
+    private Box createButtonBox() {
         Box buttonBox = Box.createHorizontalBox();
         JButton clear = createClearButton(componentCreator);
         JButton calculate = createCalculateButton(componentCreator);
@@ -109,7 +97,7 @@ public class Gui extends JFrame {
         return buttonBox;
     }
 
-    private Box createMemoryBox(){
+    private Box createMemoryBox() {
         memoryField = componentCreator.createTextField("0", false);
         Box memoryBox = Box.createHorizontalBox();
         List<JComponent> components = Collections.singletonList(memoryField);
@@ -117,7 +105,7 @@ public class Gui extends JFrame {
         return memoryBox;
     }
 
-    private Box createCurrentMemoryBox(){
+    private Box createCurrentMemoryBox() {
         JRadioButton xButton = createCurrentVariableButton("mem1");
         xButton.setSelected(true);
         memory.setCurrentVariable(0);
@@ -133,10 +121,15 @@ public class Gui extends JFrame {
         return currentMemoryBox;
     }
 
-    private JRadioButton createFunctionButton(String name, String functionFile, int formulaId) {
+    private JRadioButton createFunctionButton(String name, String functionFile) {
         JRadioButton function = new JRadioButton(name);
+        function.setName(name);
         function.addActionListener(actionEvent -> {
-            functionCalculator.setFormulaId(formulaId);
+            if (function.getName().equals("function1")) {
+                calculator.setStrategy(new Function1());
+            } else {
+                calculator.setStrategy(new Function2());
+            }
             chosenFunction.setIcon(new ImageIcon(functionFile));
             resultField.setText("0");
         });
@@ -181,7 +174,7 @@ public class Gui extends JFrame {
                 double x = Double.parseDouble(xField.getText());
                 double y = Double.parseDouble(yField.getText());
                 double z = Double.parseDouble(zField.getText());
-                resultField.setText(String.valueOf(functionCalculator.calculate(x, y, z)));
+                resultField.setText(String.valueOf(calculator.calculate(x, y, z)));
             } catch (NumberFormatException ex) {
                 JOptionPane.showMessageDialog(Gui.this, "please enter numbers");
                 resultField.setText("error");
