@@ -3,6 +3,7 @@ package gui;
 import calculator.Function1;
 import calculator.Function2;
 import calculator.FunctionCalculator;
+import java.awt.*;
 import memory.Memory;
 
 import javax.swing.JFrame;
@@ -15,7 +16,6 @@ import javax.swing.ButtonGroup;
 import javax.swing.Box;
 import javax.swing.JOptionPane;
 import javax.swing.ImageIcon;
-import java.awt.Toolkit;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -53,11 +53,11 @@ public class Gui extends JFrame {
         Box chosenFunctionBox = createChosenFunctionBox(configs);
         Box radioButtonBox = createRadioButtonBox(configs);
         Box buttonBox = createButtonBox();
-        Box memoryBox = createMemoryBox();
-        Box currentMemoryBox = createCurrentMemoryBox();
+        Box memoryTextBox = createMemoryTextBox();
+        Box currentMemoryBox = createChooseMemoryBox();
         Box box = Box.createVerticalBox();
         List<Box> boxes = Arrays.asList(radioButtonBox, chosenFunctionBox, variableBox,
-                resultBox, currentMemoryBox, memoryBox, buttonBox);
+                resultBox, buttonBox, currentMemoryBox, memoryTextBox);
         insertBoxes(box, boxes);
         this.getContentPane().add(box);
     }
@@ -116,15 +116,15 @@ public class Gui extends JFrame {
         return buttonBox;
     }
 
-    private Box createMemoryBox() {
-        memoryField = componentCreator.createTextField("0", false);
+    private Box createMemoryTextBox() {
+        memoryField = componentCreator.createTextField("0.0", false);
         Box memoryBox = Box.createHorizontalBox();
         List<JComponent> components = Collections.singletonList(memoryField);
         insertComponents(memoryBox, components);
         return memoryBox;
     }
 
-    private Box createCurrentMemoryBox() {
+    private Box createChooseMemoryBox() {
         JRadioButton xButton = createCurrentMemoryButton(MEM1);
         xButton.setSelected(true);
         memory.setCurrentVariable(MEM1);
@@ -156,7 +156,6 @@ public class Gui extends JFrame {
     }
 
     private JRadioButton createCurrentMemoryButton(MemoryVariable variable) {
-        System.out.println(variable.getName());
         JRadioButton currentVariable = new JRadioButton(variable.getName());
         currentVariable.addActionListener(actionEvent -> {
             memory.setCurrentVariable(variable);
@@ -204,7 +203,7 @@ public class Gui extends JFrame {
         boxes.remove(boxes.size() - 1);
         for (JComponent component : boxes) {
             container.add(component);
-            container.add(Box.createVerticalStrut(30));
+            container.add(Box.createVerticalStrut(20));
         }
         container.add(lastComponent);
         container.add(Box.createVerticalGlue());
