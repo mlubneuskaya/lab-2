@@ -2,9 +2,9 @@ import gui.FunctionConfig;
 import gui.Gui;
 import gui.UiConfigParams;
 
-import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
+import javax.swing.WindowConstants;
 
 public class Main {
     public static void main(String[] args) {

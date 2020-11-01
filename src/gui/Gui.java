@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.stream.Collectors;
+import memory.MemoryVariable;
 
 
 import static memory.MemoryVariable.MEM1;
@@ -124,11 +125,11 @@ public class Gui extends JFrame {
     }
 
     private Box createCurrentMemoryBox() {
-        JRadioButton xButton = createCurrentMemoryButton("mem1");
+        JRadioButton xButton = createCurrentMemoryButton(MEM1);
         xButton.setSelected(true);
         memory.setCurrentVariable(MEM1);
-        JRadioButton yButton = createCurrentMemoryButton("mem2");
-        JRadioButton zButton = createCurrentMemoryButton("mem3");
+        JRadioButton yButton = createCurrentMemoryButton(MEM2);
+        JRadioButton zButton = createCurrentMemoryButton(MEM3);
         ButtonGroup currentVariablesGroup = new ButtonGroup();
         currentVariablesGroup.add(xButton);
         currentVariablesGroup.add(yButton);
@@ -154,20 +155,11 @@ public class Gui extends JFrame {
         return function;
     }
 
-    private JRadioButton createCurrentMemoryButton(String name) {
-        JRadioButton currentVariable = new JRadioButton(name);
+    private JRadioButton createCurrentMemoryButton(MemoryVariable variable) {
+        System.out.println(variable.getName());
+        JRadioButton currentVariable = new JRadioButton(variable.getName());
         currentVariable.addActionListener(actionEvent -> {
-            switch (name) {
-                case "mem1":
-                    memory.setCurrentVariable(MEM1);
-                    break;
-                case "mem2":
-                    memory.setCurrentVariable(MEM2);
-                    break;
-                case "mem3":
-                    memory.setCurrentVariable(MEM3);
-                    break;
-            }
+            memory.setCurrentVariable(variable);
             memoryField.setText(String.valueOf(memory.getMemoryValue()));
         });
         return currentVariable;
