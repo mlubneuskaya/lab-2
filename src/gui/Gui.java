@@ -1,9 +1,8 @@
 package gui;
 
 import calculator.Function1;
-import calculator.Function2;
 import calculator.FunctionCalculator;
-import java.awt.*;
+import java.awt.Toolkit;
 import memory.Memory;
 
 import javax.swing.JFrame;
@@ -95,7 +94,7 @@ public class Gui extends JFrame {
     private Box createRadioButtonBox(List<FunctionConfig> configs) {
         Box radioButtonBox = Box.createHorizontalBox();
         List<JRadioButton> buttons = configs.stream()
-                .map(config-> createFunctionButton(config.name, config.filePath))
+                .map(this::createFunctionButton)
                 .collect(Collectors.toList());
         buttons.get(0).setSelected(true);
         calculator.setFunction(new Function1());
@@ -140,16 +139,11 @@ public class Gui extends JFrame {
         return currentMemoryBox;
     }
 
-    private JRadioButton createFunctionButton(String name, String functionFile) {
-        JRadioButton function = new JRadioButton(name);
-        function.setName(name);
+    private JRadioButton createFunctionButton(FunctionConfig config) {
+        JRadioButton function = new JRadioButton(config.name);
         function.addActionListener(actionEvent -> {
-            if (function.getName().equals("function1")) {
-                calculator.setFunction(new Function1());
-            } else {
-                calculator.setFunction(new Function2());
-            }
-            chosenFunction.setIcon(new ImageIcon(functionFile));
+            calculator.setFunction(config.function);
+            chosenFunction.setIcon(new ImageIcon(config.filePath));
             resultField.setText("0");
         });
         return function;
@@ -237,7 +231,7 @@ public class Gui extends JFrame {
         JButton mc = componentCreator.createButton("MC");
         mc.addActionListener(actionEvent -> {
             memory.clearCurrentVariableMemory();
-            memoryField.setText("0");
+            memoryField.setText("0.0");
         });
         return mc;
     }
