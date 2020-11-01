@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.stream.Collectors;
 
 
 import static memory.MemoryVariable.MEM1;
@@ -33,12 +34,11 @@ public class Gui extends JFrame {
     private JTextField yField;
     private JTextField zField;
     private JTextField memoryField;
-    private final String[] functionFiles;
     private final Memory memory;
     private final ComponentCreator componentCreator;
     private final FunctionCalculator calculator;
 
-    public Gui(UiConfigParams params, String[] functionFiles) {
+    public Gui(UiConfigParams params, List<FunctionConfig> configs) {
         super(params.title);
         memory = new Memory();
         calculator = new FunctionCalculator();
@@ -47,11 +47,10 @@ public class Gui extends JFrame {
         setLocation((kit.getScreenSize().width - params.width) / 2,
                 (kit.getScreenSize().height - params.height) / 2);
         componentCreator = new ComponentCreator();
-        this.functionFiles = functionFiles;
         Box variableBox = createVariableBox();
         Box resultBox = createResultBox();
-        Box chosenFunctionBox = createChosenFunctionBox();
-        Box radioButtonBox = createRadioButtonBox();
+        Box chosenFunctionBox = createChosenFunctionBox(configs);
+        Box radioButtonBox = createRadioButtonBox(configs);
         Box buttonBox = createButtonBox();
         Box memoryBox = createMemoryBox();
         Box currentMemoryBox = createCurrentMemoryBox();
@@ -84,25 +83,24 @@ public class Gui extends JFrame {
         return resultBox;
     }
 
-    private Box createChosenFunctionBox() {
-        chosenFunction = new JLabel(new ImageIcon(functionFiles[0]));
+    private Box createChosenFunctionBox(List<FunctionConfig> configs) {
+        chosenFunction = new JLabel(new ImageIcon(configs.get(0).filePath));
         Box chosenFunctionBox = Box.createHorizontalBox();
         List<JComponent> components = Collections.singletonList(chosenFunction);
         insertComponents(chosenFunctionBox, components);
         return chosenFunctionBox;
     }
 
-    private Box createRadioButtonBox() {
+    private Box createRadioButtonBox(List<FunctionConfig> configs) {
         Box radioButtonBox = Box.createHorizontalBox();
-        JRadioButton function1 = createFunctionButton("function1", functionFiles[0]);
-        function1.setSelected(true);
+        List<JRadioButton> buttons = configs.stream()
+                .map(config-> createFunctionButton(config.name, config.filePath))
+                .collect(Collectors.toList());
+        buttons.get(0).setSelected(true);
         calculator.setFunction(new Function1());
-        JRadioButton function2 = createFunctionButton("function2", functionFiles[1]);
         ButtonGroup radioButtonGroup = new ButtonGroup();
-        radioButtonGroup.add(function1);
-        radioButtonGroup.add(function2);
-        List<JComponent> components = Arrays.asList(function1, function2);
-        insertComponents(radioButtonBox, components);
+        buttons.forEach(radioButtonGroup::add);
+        insertComponents(radioButtonBox, new ArrayList<>(buttons));
         return radioButtonBox;
     }
 
